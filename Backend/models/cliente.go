@@ -4,7 +4,7 @@ import "time"
 
 type User struct {
 	Username      string
-	Password      []byte
+	Password      string //[]byte
 	Nombre        string
 	Apellido      string
 	Tier          int

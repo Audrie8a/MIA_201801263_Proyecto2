@@ -10,5 +10,8 @@ func Setup(app *fiber.App) {
 
 	//Plantilla Peticiones
 	app.Get("/", controllers.Hello)
-	app.Post("/Post", controllers.CrearUsuario)
+
+	app.Post("/CrearUsuario", controllers.CrearUsuario)
+
+	app.Post("/Login", controllers.Login)
 }
