@@ -97,9 +97,12 @@ func Login(c *fiber.Ctx) error {
 		res.Scan(&nombre)
 		if nombre != "" {
 			resultado2 = "Acceso Concedido! " + nombre
+			break
 		} else {
 			resultado2 = "Acceso Denegado! No hay usuarios registrados con los datos ingresados"
+			break
 		}
 	}
+	println(resultado2)
 	return c.SendString(resultado2)
 }
