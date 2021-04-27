@@ -13,3 +13,7 @@ type User struct {
 	Correo        string
 	Foto          string
 }
+
+type Mensaje struct {
+	Mensaje string
+}

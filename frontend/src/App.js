@@ -1,16 +1,20 @@
 //import logo from './assets/imagenes/logo.svg';
 import './assets/css/App.css';
-
-import Tabla from  './Components/Tabla';
-import Login from './Components/Login'
-
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import Inicio from './Components/InicioTabs';
+import paginaUsuarios from './Components/PaginaUsuarios';
 function App() {
   return (
-    <div className="App">
-      <Tabla />
-      <Login/>
-    </div>
     
+    <div className="App">
+      <Router>
+        <Switch>
+          <Route exact path="/" component={Inicio}/>
+          <Route exact path="/Usuario" component={paginaUsuarios}/>
+        </Switch>
+      </Router>
+    </div>
+
   );
 }
 

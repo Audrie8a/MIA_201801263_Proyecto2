@@ -17,6 +17,7 @@ func Hello(c *fiber.Ctx) error {
 
 func CrearUsuario(c *fiber.Ctx) error {
 	var resultado string
+	resultado = "Error al registrar!"
 	var data map[string]string
 	database.Connect()
 	if err := c.BodyParser(&data); err != nil {
@@ -25,7 +26,7 @@ func CrearUsuario(c *fiber.Ctx) error {
 	layout := "01-01-2000 13:34"
 	fecha, _ := time.Parse(layout, data["FechaNac"])
 	fechaR, _ := time.Parse(layout, data["FechaRegistro"])
-	TierInt, _ := strconv.Atoi(data["Tier"])
+	//TierInt, _ := strconv.Atoi(data["Tier"])
 	//password, _ := bcrypt.GenerateFromPassword([]byte(data["Password"]), 14)
 
 	user := models.User{
@@ -33,7 +34,7 @@ func CrearUsuario(c *fiber.Ctx) error {
 		Password:      data["Password"], //password,
 		Nombre:        data["Nombre"],
 		Apellido:      data["Apellido"],
-		Tier:          TierInt,
+		Tier:          0,
 		FechaNac:      fecha,
 		FechaRegistro: fechaR,
 		Correo:        data["Correo"],
@@ -46,20 +47,25 @@ func CrearUsuario(c *fiber.Ctx) error {
 	//queryString+= ","+"'"+ user.FechaNac+"')"
 	queryString += ", '" + user.Correo + "' , '" + user.Foto + "')"
 	res, err := database.DB.Query(queryString)
-
+	msj := models.Mensaje{
+		Mensaje: resultado,
+	}
 	if err != nil {
 		resultado = "Error al realizar Query!"
 		return err
 	}
 	resultado = "Cliente Registrado!"
 	println("Cliente Registrado! ", res)
-
+	msj = models.Mensaje{
+		Mensaje: resultado,
+	}
 	//return c.JSON(err)
-	return c.SendString(resultado)
+	return c.JSON(msj)
 }
 
 func Login(c *fiber.Ctx) error {
 	var resultado2 string
+	resultado2 = "Acceso Denegado"
 	var data map[string]string
 	database.Connect()
 	if err := c.BodyParser(&data); err != nil {
@@ -84,8 +90,11 @@ func Login(c *fiber.Ctx) error {
 
 	println(stringQuery)
 	res, err := database.DB.Query(stringQuery)
-
+	msj := models.Mensaje{
+		Mensaje: resultado2,
+	}
 	if err != nil {
+
 		return err
 	}
 	println(res)
@@ -96,13 +105,16 @@ func Login(c *fiber.Ctx) error {
 	for res.Next() {
 		res.Scan(&nombre)
 		if nombre != "" {
-			resultado2 = "Acceso Concedido! " + nombre
-			break
+			resultado2 = "Acceso Concedido!"
 		} else {
 			resultado2 = "Acceso Denegado! No hay usuarios registrados con los datos ingresados"
-			break
+
 		}
 	}
+	msj = models.Mensaje{
+		Mensaje: resultado2,
+	}
 	println(resultado2)
-	return c.SendString(resultado2)
+	//return c.Response().Write([]byte("Hello"))
+	return c.JSON(msj) //c.SendString(resultado2)
 }

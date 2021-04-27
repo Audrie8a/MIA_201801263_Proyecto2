@@ -1,8 +1,11 @@
 import React, {  useState, useEffect } from 'react'
 import "../assets/css/Login.css"
 import Axios from 'axios'
+import {useHistory} from 'react-router-dom';
+import paginaUsuarios from "./PaginaUsuarios";
 
 function Login (){
+    var history = useHistory();
     const [Username, setUser] = useState('')
     const [Password, setPassword] = useState('')
     const submitIngreso=()=>{
@@ -10,13 +13,16 @@ function Login (){
         {
             Username:Username,
             Password: Password
-        }).then(()=>{
-            alert ('Ingresando...')
-        });
+        }).then((response)=>{
+            alert (response.data.Mensaje)
+            if (response.data.Mensaje==="Acceso Concedido!"){
+                history.push("/Usuario")
+            }
+        })
+        
     };
 
     return (
-        <React.Fragment>
             <div className="form">
                 <label>Usuario</label>
                 <input type="text" name="Username" onChange={(e) =>
@@ -28,8 +34,6 @@ function Login (){
                 } />
                 <button onClick={submitIngreso}>Ingresar</button>
             </div>
-        </React.Fragment>
-
 
 
     );
