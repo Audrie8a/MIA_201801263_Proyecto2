@@ -2,9 +2,8 @@ import React, {  useState, useEffect } from 'react'
 import "../assets/css/Login.css"
 import Axios from 'axios'
 import {useHistory} from 'react-router-dom';
-import paginaUsuarios from "./PaginaUsuarios";
 
-function Login (){
+const Login = props =>{
     var history = useHistory();
     const [Username, setUser] = useState('')
     const [Password, setPassword] = useState('')
@@ -16,7 +15,11 @@ function Login (){
         }).then((response)=>{
             alert (response.data.Mensaje)
             if (response.data.Mensaje==="Acceso Concedido!"){
-                history.push("/Usuario")
+                if (Username==="201801263"){
+                    history.push("/Admin/"+Username );  
+                }else{
+                    history.push("/Usuario/"+Username );  
+                }             
             }
         })
         

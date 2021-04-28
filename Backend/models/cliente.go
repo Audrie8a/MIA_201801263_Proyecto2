@@ -17,3 +17,7 @@ type User struct {
 type Mensaje struct {
 	Mensaje string
 }
+
+type Users struct {
+	Users []User
+}

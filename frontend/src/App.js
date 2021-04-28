@@ -3,6 +3,8 @@ import './assets/css/App.css';
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import Inicio from './Components/InicioTabs';
 import paginaUsuarios from './Components/PaginaUsuarios';
+import inicioAdmin from './Components/Admin/InicioAdmin';
+
 function App() {
   return (
     
@@ -10,7 +12,8 @@ function App() {
       <Router>
         <Switch>
           <Route exact path="/" component={Inicio}/>
-          <Route exact path="/Usuario" component={paginaUsuarios}/>
+          <Route exact path="/Usuario/:id" component={paginaUsuarios} />
+          <Route exact path="/Admin/:id" component={inicioAdmin} />
         </Switch>
       </Router>
     </div>

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -15,6 +16,7 @@ func Hello(c *fiber.Ctx) error {
 	return c.SendString("Hello, World !")
 }
 
+//Registro
 func CrearUsuario(c *fiber.Ctx) error {
 	var resultado string
 	resultado = "Error al registrar!"
@@ -63,6 +65,7 @@ func CrearUsuario(c *fiber.Ctx) error {
 	return c.JSON(msj)
 }
 
+//Login
 func Login(c *fiber.Ctx) error {
 	var resultado2 string
 	resultado2 = "Acceso Denegado"
@@ -85,7 +88,7 @@ func Login(c *fiber.Ctx) error {
 		Correo:        data["Correo"],
 		Foto:          data["Foto"],
 	}
-	stringQuery := "Select Nombre from Cliente where Username='"
+	stringQuery := "Select Username from Cliente where Username='"
 	stringQuery += user.Username + "' and Password= '" + string(user.Password) + "'"
 
 	println(stringQuery)
@@ -117,4 +120,95 @@ func Login(c *fiber.Ctx) error {
 	println(resultado2)
 	//return c.Response().Write([]byte("Hello"))
 	return c.JSON(msj) //c.SendString(resultado2)
+}
+
+//Obtener Datos Usuario
+func GetUsuario(c *fiber.Ctx) error {
+	var data map[string]string
+	database.Connect()
+	if err := c.BodyParser(&data); err != nil {
+		return err
+	}
+
+	//password, _ := bcrypt.GenerateFromPassword([]byte(data["Password"]), 14)
+
+	user := models.User{
+		Username:      data["Username"],
+		Password:      data["Password"], //password,
+		Nombre:        data["Nombre"],
+		Apellido:      data["Apellido"],
+		Tier:          0,
+		FechaNac:      time.Now(),
+		FechaRegistro: time.Now(),
+		Correo:        data["Correo"],
+		Foto:          data["Foto"],
+	}
+	stringQuery := "Select * from Cliente where Username='"
+	stringQuery += user.Username + "'"
+
+	println(stringQuery)
+	res, err := database.DB.Query(stringQuery)
+
+	if err != nil {
+		fmt.Println("Error durante Query!")
+		return err
+	}
+
+	defer res.Close()
+
+	var Username, Password, Nombre, Apellido, Correo, Foto string
+	var Tier int
+	var FechaNac, FechaRegistro time.Time
+	for res.Next() {
+		res.Scan(&Username, &Password, &Nombre, &Apellido, &Tier, &FechaNac, &FechaRegistro, &Correo, &Foto)
+		if Username == "" {
+			fmt.Println("Error Escanenado Datos!")
+			return err
+		}
+	}
+
+	Usuario := models.User{
+		Username:      Username,
+		Password:      Password, //password,
+		Nombre:        Nombre,
+		Apellido:      Apellido,
+		Tier:          Tier,
+		FechaNac:      FechaNac,
+		FechaRegistro: FechaRegistro,
+		Correo:        Correo,
+		Foto:          Foto,
+	}
+	return c.JSON(Usuario)
+}
+
+//Ejemplo Get
+func GetUsuarios(c *fiber.Ctx) error {
+	database.Connect()
+
+	stringQuery := "Select * from Cliente"
+	rows, err := database.DB.Query(stringQuery)
+
+	if err != nil {
+
+		fmt.Print("Error running Query!")
+		return err
+	}
+
+	defer rows.Close()
+
+	result := models.Users{}
+
+	for rows.Next() {
+		Usuario := models.User{}
+
+		err := rows.Scan(&Usuario.Username, &Usuario.Password, &Usuario.Nombre, &Usuario.Apellido, &Usuario.Tier, &Usuario.FechaNac, &Usuario.FechaRegistro, &Usuario.Correo, &Usuario.Foto)
+
+		if err != nil {
+			fmt.Println("Error recorriendo Usuarios!")
+			return err
+		}
+		result.Users = append(result.Users, Usuario)
+	}
+
+	return c.JSON(result)
 }

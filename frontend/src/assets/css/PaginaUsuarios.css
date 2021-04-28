@@ -1,0 +1,114 @@
+*, ::before, ::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    background: rgba(11, 37, 43, 0.822);
+  }
+  
+  .Titulo{
+      background-image: url("../imagenes/fondo2.jpg");
+      width: auto;
+      height: 140px  ;
+      text-align: center;
+      position: relative;     
+  }
+
+  .Titulo ::before{
+    content:'';
+	position: absolute;
+    top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-color: rgba(0,0,0,0.6);
+  }
+  .Titulo h1{
+      text-align: center;
+      vertical-align: center;
+      color:rgb(231, 233, 235);
+      background-color: beige;
+  }
+  .containerUsuario {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: auto;
+    height: 1000px;
+    background: #819e8173;
+    margin: 10px auto 0;
+    word-break: break-all;
+    border: 1px solid rgba(72, 139, 33, 0.945);
+  }
+  
+  .bloc-tabs {
+    display: flex;
+  }
+  .tabs {
+  
+    padding: 15px;
+    text-align: center;
+    width: 50%;
+    background: rgba(128, 128, 128, 0.075);
+    cursor: pointer;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.274);
+    box-sizing: content-box;
+    position: relative;
+    outline: none;
+    font-size: 20px;
+  }
+  .tabs:not(:last-child){
+    border-right: 1px solid rgba(0, 0, 0, 0.274);
+  }
+  
+  .active-tabs  {
+    background: rgba(45, 75, 49, 0.5);
+    border-bottom: 1px solid transparent;
+  }
+  
+  .active-tabs::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% + 2px);
+    height: 5px;
+    background: rgb(11, 32, 20);
+  }
+  
+  
+  
+  button {
+    border: none;
+    
+  }
+  .content-tabs {
+    flex-grow : 1;
+  }
+  .content {
+    background: white;
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    display: none;
+  }
+  .content h2 {
+    padding: 0px 0 5px 0px;
+  }
+  .content hr {
+    width: 100px;
+    height: 2px;
+    background: #222;
+    margin-bottom: 5px;
+  }
+  .content p {
+    width: 100%;
+    height: 100%;
+  }
+  .active-content {
+    display: block;
+  }
