@@ -65,6 +65,65 @@ func CrearUsuario(c *fiber.Ctx) error {
 	return c.JSON(msj)
 }
 
+//Registro
+func CrearMembresia(c *fiber.Ctx) error {
+	var resultado string
+	resultado = "Error al registrar!"
+	var data map[string]string
+	database.Connect()
+	if err := c.BodyParser(&data); err != nil {
+		return err
+	}
+
+	//Temporada, _ := strconv.Atoi(data["idTemporada"])
+	EstadoMembresia, _ := strconv.Atoi(data["idEstadoMembresia"])
+	TipoMembresia, _ := strconv.Atoi(data["idTipoMembresia"])
+	membresia := models.Membresia{
+		IdMembresia:       0,
+		IdTemporada:       0, //Temporada,   //Falta Corregir Temporadas
+		IdEstadoMembresia: EstadoMembresia,
+		IdTipoMembresia:   TipoMembresia,
+	}
+	queryString := "insert into Membresia (idTemporada, idEstadoMembresia,idTipoMembresia) values ("
+	queryString += strconv.Itoa(membresia.IdTemporada) + "," + strconv.Itoa(membresia.IdEstadoMembresia) + "," + strconv.Itoa(membresia.IdTipoMembresia) + ")"
+	res, err := database.DB.Query(queryString)
+
+	if err != nil {
+		resultado = "Error al realizar Query!"
+		println(resultado)
+		return err
+	}
+	resultado = "Membresia Registrada!"
+	println(resultado, res)
+
+	queryString = "select * from (select * from Membresia order by idMembresia desc) where rownum=1"
+	res2, err2 := database.DB.Query(queryString)
+	if err2 != nil {
+		resultado = "Error al realizar Query Obtener id Membresia!"
+		println(resultado)
+		return err2
+	}
+	print(resultado)
+	defer res2.Close()
+
+	var idMemb, idTemp, idEst, idTip int
+	for res2.Next() {
+		res2.Scan(&idMemb, &idEst, &idTemp, &idTip)
+		if idTemp == 0 {
+			fmt.Println("Error Escanenado Datos!")
+			return err
+		}
+	}
+	Membre := models.Membresia{
+		IdMembresia:       idMemb,
+		IdTemporada:       idTemp,
+		IdEstadoMembresia: idEst,
+		IdTipoMembresia:   idTip,
+	}
+	//return c.JSON(err)
+	return c.JSON(Membre)
+}
+
 //Login
 func Login(c *fiber.Ctx) error {
 	var resultado2 string
@@ -211,4 +270,53 @@ func GetUsuarios(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(result)
+}
+
+//Actualizar datos Usuario
+func UpdateUsuario(c *fiber.Ctx) error {
+	var resultado string
+	resultado = "Error al Editar!"
+	var data map[string]string
+	database.Connect()
+	if err := c.BodyParser(&data); err != nil {
+		return err
+	}
+
+	//password, _ := bcrypt.GenerateFromPassword([]byte(data["Password"]), 14)
+	tier, _ := strconv.Atoi(data["Tier"])
+
+	user := models.User{
+		Username:      data["Username"],
+		Password:      data["Password"], //password,
+		Nombre:        data["Nombre"],
+		Apellido:      data["Apellido"],
+		Tier:          tier,
+		FechaNac:      time.Now(),
+		FechaRegistro: time.Now(),
+		Correo:        data["Correo"],
+		Foto:          data["Foto"],
+	}
+	stringQuery := "update cliente set password='"
+	stringQuery += user.Password + "' , nombre='" + user.Nombre + "', "
+	stringQuery += "apellido='" + user.Apellido + "' , Tier=" + strconv.Itoa(user.Tier)
+	//stringQuery+= ", FechaNac='"+user.FechaNac+"' , FechaRegistro='"+user.FechaRegistro
+	stringQuery += ", correo='" + user.Correo + "' , Foto='" + user.Foto + "'"
+	stringQuery += "where username='" + user.Username + "'"
+
+	res, err := database.DB.Query(stringQuery)
+
+	msj := models.Mensaje{
+		Mensaje: resultado,
+	}
+	if err != nil {
+		fmt.Println("Error durante Query!")
+		return err
+	}
+	println("Datos Actualizados! ", res)
+	resultado = "Datos Actualizados!"
+	msj = models.Mensaje{
+		Mensaje: resultado,
+	}
+
+	return c.JSON(msj)
 }

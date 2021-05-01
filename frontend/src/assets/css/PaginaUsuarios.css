@@ -1,3 +1,8 @@
+.containerUsuario{
+  width: auto;
+  height: 1000px;
+}
+
 *, ::before, ::after {
     box-sizing: border-box;
     margin: 0;

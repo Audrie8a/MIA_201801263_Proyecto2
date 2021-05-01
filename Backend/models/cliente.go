@@ -21,3 +21,10 @@ type Mensaje struct {
 type Users struct {
 	Users []User
 }
+
+type Membresia struct {
+	IdMembresia       int
+	IdTemporada       int
+	IdEstadoMembresia int
+	IdTipoMembresia   int
+}

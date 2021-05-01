@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import "../assets/css/PaginaUsuarios.css";
 import Axios from 'axios';
 import Perfil from './Perfil';
-
+import Tier from './Tier'
 function PaginaUsuarios({ match: { params: { id } } }) {
+        const [FotoUrl, setFotoUrl]= useState('');
         const [Respuesta, setRespuesta] = useState(JSON);
         const [Membresia, setMembresia] = useState('');
         const [toggleState, setToggleState] = useState(1);
+        
         const toggleTab = (index) => {
                 setToggleState(index);
-                if (index === 1) {
+                if (index === 1 || index===2) {
                         Axios.post('http://localhost:4000/datosUsuario',
                                 {
                                         Username: id
@@ -22,6 +24,12 @@ function PaginaUsuarios({ match: { params: { id } } }) {
                                                 setMembresia("Bronze");
                                         }else {
                                                 setMembresia("No registrado");
+                                        }
+
+                                        if(response.data.Foto===''){
+                                                setFotoUrl("../assets/imagenes/NoImagen.jpg")
+                                        }else{
+                                                setFotoUrl(response.data.Foto)
                                         }
 
                                         setRespuesta(response.data);
@@ -52,15 +60,15 @@ function PaginaUsuarios({ match: { params: { id } } }) {
 
                                         <div className="content active-content">
 
-                                                <Perfil usuario={Respuesta} membresia={Membresia} />
+                                                <Perfil usuario={Respuesta} membresia={Membresia} FotoPath={FotoUrl} />
 
                                         </div>
                                 </div>
                                 <div className={toggleState === 2 ? "content active-content" : "content"}>
 
                                         <div className="content active-content">
-
-
+                                                <Tier usuario={Respuesta}/>         
+                                       
                                         </div>
                                 </div>
                                 <div className={toggleState === 3 ? "content active-content" : "content"}>
