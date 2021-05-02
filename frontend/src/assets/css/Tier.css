@@ -1,0 +1,116 @@
+.containerTier{
+    width: auto;
+    height: 300px;
+  }
+  
+  
+  .formEditado button{
+    width: 150px;
+    height: 33px;
+    background-color: rgba(237, 243, 241, 0.932);
+    margin-top: 15px;
+    font-weight: bold;
+    border-color: rgb(20, 87, 87);
+  }
+  .table {
+      width: 100%;  
+      border-collapse: collapse;
+    }
+    .table td{
+      padding: 8px;
+      text-align: center;
+    }
+    .table th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: center;
+      background-color: #0a440c83;
+      color: white;
+      padding: 8px;
+    }
+    
+    .table input{
+      text-align: center;
+      border-color:transparent;
+      font-size: 14px;
+    }
+  
+    *, ::before, ::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+   
+    
+    .bloc-tabs3 {
+      display:flex;
+      position:relative;
+    }
+    .tabs3 {
+    
+      padding: 10px;
+      text-align: center;
+      width: 100px;
+      background: rgba(128, 128, 128, 0.075);
+      cursor: pointer;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.274);
+      box-sizing: content-box;
+      position: relative;
+      outline: none;
+      font-size: 15px;
+      
+    }
+    .tabs3:not(:last-child){
+      border-right: 1px solid rgba(0, 0, 0, 0.274);
+    }
+    
+    .active-tabs3  {
+      background: rgba(45, 75, 49, 0.5);
+      border-bottom: 1px solid transparent;
+    }
+    
+    .active-tabs3::before {
+      content: "";
+      display: block;
+      position: absolute;
+      top: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% + 2px);
+      height: 5px;
+      background: rgb(11, 32, 20);
+    }
+    
+    
+    
+    button {
+      border: none;
+      
+    }
+    .content-tabs3 {
+      flex-grow : 1;
+    }
+    .content {
+      background: white;
+      padding: 20px;
+      width: 100%;
+      height: 100%;
+      display: none;
+    }
+    .content h2 {
+      padding: 0px 0 5px 0px;
+    }
+    .content hr {
+      width: 100px;
+      height: 2px;
+      background: #222;
+      margin-bottom: 5px;
+    }
+    .content p {
+      width: 100%;
+      height: 100%;
+    }
+    .active-content {
+      display: block;
+    }

@@ -15,6 +15,8 @@ func Setup(app *fiber.App) {
 
 	app.Post("/Login", controllers.Login)
 
+	app.Post("/LoginProc", controllers.LoginProc)
+
 	app.Get("/Usuarios", controllers.GetUsuarios)
 
 	app.Post("/datosUsuario", controllers.GetUsuario)
@@ -22,4 +24,5 @@ func Setup(app *fiber.App) {
 	app.Post("/updateUsuario", controllers.UpdateUsuario)
 
 	app.Post("/membresia", controllers.UpdateUsuario)
+
 }

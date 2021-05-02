@@ -320,3 +320,47 @@ func UpdateUsuario(c *fiber.Ctx) error {
 
 	return c.JSON(msj)
 }
+
+func LoginProc(c *fiber.Ctx) error {
+	var resultado2 string
+	resultado2 = "Acceso Denegado"
+	var data map[string]string
+	database.Connect()
+	if err := c.BodyParser(&data); err != nil {
+		return err
+	}
+
+	//password, _ := bcrypt.GenerateFromPassword([]byte(data["Password"]), 14)
+
+	user := models.User{
+		Username:      data["Username"],
+		Password:      data["Password"], //password,
+		Nombre:        data["Nombre"],
+		Apellido:      data["Apellido"],
+		Tier:          0,
+		FechaNac:      time.Now(),
+		FechaRegistro: time.Now(),
+		Correo:        data["Correo"],
+		Foto:          data["Foto"],
+	}
+	println(user.Apellido)
+	stringQuery := "call login_usuario('"
+	stringQuery += user.Username + "', '" + string(user.Password) + "')"
+	//stringQuery := "Set serverout on"
+	println(stringQuery)
+	res, err := database.DB.Query(stringQuery)
+	msj := models.Mensaje{
+		Mensaje: resultado2,
+	}
+	if err != nil {
+
+		return err
+	}
+	println(res)
+
+	//defer res.Close()
+
+	println(resultado2)
+	//return c.Response().Write([]byte("Hello"))
+	return c.JSON(msj) //c.SendString(resultado2)
+}
