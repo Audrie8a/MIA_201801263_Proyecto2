@@ -24,9 +24,9 @@ const Tier = props =>{
             <div className="containerTier">
                 <div className="bloc-tabs3">
                     <div className={toggleState === 1 ? "tabs3 active-tabs3" : "tabs3"}
-                        onClick={() => toggleTab(1)}>Asignar</div>
+                        onClick={() => toggleTab(1)}>Editar/Activar</div>
                     <div className={toggleState === 2 ? "tabs3 active-tabs3" : "tabs3"}
-                        onClick={() => toggleTab(2)}>Editar</div>
+                        onClick={() => toggleTab(2)}>Datos Membresia</div>
                 </div>
                 <div className={toggleState === 1 ? "content active-content" : "content"}>
 
@@ -45,7 +45,7 @@ const Tier = props =>{
                                         <tbody>
                                             <tr>
                                                 <td ><Select options={options}/></td>
-                                                <td><button>Elegir</button></td>
+                                                <td><button id="Boton">Elegir</button><br/><br/><button>Cancelar</button></td>
                                             </tr>
                                         </tbody>
                                     </table>

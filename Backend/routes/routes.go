@@ -25,4 +25,6 @@ func Setup(app *fiber.App) {
 
 	app.Post("/membresia", controllers.UpdateUsuario)
 
+	app.Post("/CargarDatos", controllers.CargaMasiva)
+
 }

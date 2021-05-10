@@ -1,0 +1,34 @@
+.form5{
+    display:flex;
+    flex-direction:row;
+    align-items: center;
+    justify-content: center;
+}
+
+
+#Boton{
+    width: 150px;
+    height: 35px;
+    background-color: rgba(15, 43, 31, 0.521);
+    margin-top: 15px;
+    font-weight: bold;
+    border-color: darkslategrey;
+    margin: 25px;
+}
+
+#Carga{
+  background: #215c1f3f;
+  color: rgb(15, 43, 31);
+  cursor: pointer;
+  margin-bottom: 0;
+  text-transform: uppercase;
+  width: 60%;
+  border-radius: 5px;
+  height: 35px;
+  border-color: transparent;
+  box-shadow: 0px;
+  outline: none;
+  transition: 0.15s;
+  text-align: left;
+  
+}
