@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"math/rand"
 	"strconv"
 	"strings"
 	"time"
@@ -404,6 +405,7 @@ func LoginProc(c *fiber.Ctx) error {
 }
 
 //CARGA MASIVA --------------------------------------------------------------------------------
+
 func CargaMasiva(c *fiber.Ctx) error {
 	var resultado string
 	resultado = "Error al Cargar Datos!"
@@ -444,12 +446,46 @@ func CargaMasiva(c *fiber.Ctx) error {
 			tipoTier = element2.Tier
 
 			resultado = insertResultados(nombreTemporada, tipoTier)
-
+			var fechaIniTemporada string
+			var fechaFinTemporada string
+			var contadorTemp int = 0
 			for _, element3 := range element2.Jornadas {
-				var nombreJornada string
-				nombreJornada = element3.Jornada
-				fmt.Println(nombreJornada)
+				var nombreJornada string = element3.Jornada
+				insertJornadas(nombreJornada)
+				var fechaIniJornada string
+				var fechaFinJornada string
+				var contador int = 0
+				colorLst := [8]string{"rojo", "rosado", "aqua", "verde", "cafe", "celeste", "naranja", "amarillo"}
+				for _, element4 := range element3.Predicciones {
+					var deporte string = element4.Deporte
+					var fecha string = element4.Fecha
+					var visitante string = element4.Visitante
+					var local string = element4.Local
+					var preVisitante int = element4.Prediccion.Visitante
+					var preLocal int = element4.Prediccion.Local
+					var resVisitante int = element4.Resultado.Visitante
+					var resLocal int = element4.Resultado.Local
+					var color string = colorLst[rand.Intn(7)]
+					fechaFinJornada = fecha
+					resultado = insert_EventoDeportivoDeportePrediccion(deporte, color, fecha, visitante, local, strconv.Itoa(preVisitante), strconv.Itoa(preLocal), strconv.Itoa(resVisitante), strconv.Itoa(resLocal))
+					if contador == 0 {
+						fechaIniJornada = fecha
+					}
+
+				}
+
+				//Aquí va procedimiento para actualizar Datos Jornada
+				updateFechasJornada(fechaIniJornada, fechaFinJornada)
+				if contadorTemp == 0 {
+					fechaIniTemporada = fechaIniJornada
+				}
+
+				fechaFinTemporada = fechaFinJornada
+
 			}
+
+			//Aquí va el proceso para actualizar Temporada
+			updateFechasTemporada(fechaIniTemporada, fechaFinTemporada)
 		}
 
 	}
@@ -519,6 +555,7 @@ func insertUsuario(usuario string, contra string, nombre string, apellido string
 		fmt.Println(err)
 		return resultado
 	}
+	defer database.DB.Close()
 	resultado = "Insert Usuario Correcto!"
 	println(resultado, res)
 
@@ -540,13 +577,123 @@ func insertResultados(nombreTemp string, tipoMemb string) string {
 	queryString += "'" + nombreTemp + "', '" + tipoMemb + "')"
 
 	res, err := database.DB.Query(queryString)
-
+	defer database.DB.Close()
 	if err != nil {
 		resultado = "Error al realizar Query!"
 		fmt.Println(err)
 		return resultado
 	}
 	resultado = "Insert Resultados Correcto!"
+	println(resultado, res)
+
+	return resultado
+}
+func insertJornadas(nombreJornada string) string {
+	var resultado string
+	resultado = ""
+	database.Connect()
+
+	queryString := "call Insert_Jornadas("
+	queryString += "'" + nombreJornada + "')"
+
+	res, err := database.DB.Query(queryString)
+
+	if err != nil {
+		resultado = "Error al realizar Query!"
+		fmt.Println(err)
+		return resultado
+	}
+	defer database.DB.Close()
+	resultado = "Insert Jornadas Correcto!"
+	println(resultado, res)
+
+	return resultado
+}
+
+func updateFechasTemporada(fechaIni string, fechaFin string) string {
+	var resultado string
+	resultado = ""
+	database.Connect()
+	queryString := "ALTER SESSION SET nls_date_format = 'DD/MM/YYYY HH24:MI'"
+	res2, err2 := database.DB.Query(queryString)
+
+	if err2 != nil {
+		resultado = "Error al realizar Query!"
+		fmt.Println(err2)
+		return resultado
+	}
+	fmt.Println(res2)
+	queryString = "call Update_Temporada("
+	queryString += "'" + fechaIni + "', '" + fechaFin + "' )"
+
+	res, err := database.DB.Query(queryString)
+
+	if err != nil {
+		resultado = "Error al realizar Query!"
+		fmt.Println(err)
+		return resultado
+	}
+	defer database.DB.Close()
+	resultado = "Insert Fechas Temporada Correcto!"
+	println(resultado, res)
+
+	return resultado
+}
+
+func updateFechasJornada(fechaIni string, fechaFin string) string {
+	var resultado string
+	resultado = ""
+	database.Connect()
+	queryString := "ALTER SESSION SET nls_date_format = 'DD/MM/YYYY HH24:MI'"
+	res2, err2 := database.DB.Query(queryString)
+
+	if err2 != nil {
+		resultado = "Error al realizar Query!"
+		fmt.Println(err2)
+		return resultado
+	}
+	fmt.Println(res2)
+	queryString = "call Update_Jornada("
+	queryString += "'" + fechaIni + "', '" + fechaFin + "' )"
+
+	res, err := database.DB.Query(queryString)
+
+	if err != nil {
+		resultado = "Error al realizar Query!"
+		fmt.Println(err)
+		return resultado
+	}
+	defer database.DB.Close()
+	resultado = "Insert Fechas Jornada Correcto!"
+	println(resultado, res)
+
+	return resultado
+}
+func insert_EventoDeportivoDeportePrediccion(deporte string, color string, fecha string, visitante string, local string, preVisitante string, preLocal string, resVisitante string, resLocal string) string {
+	var resultado string
+	resultado = ""
+	database.Connect()
+	queryString := "ALTER SESSION SET nls_date_format = 'DD/MM/YYYY HH24:MI'"
+	res2, err2 := database.DB.Query(queryString)
+
+	if err2 != nil {
+		resultado = "Error al realizar Query!"
+		fmt.Println(err2)
+		return resultado
+	}
+	fmt.Println(res2)
+	queryString = "call Insert_EventoDeportivoDeporte("
+	queryString += "'" + deporte + "', '" + color + "', '" + fecha + "', '" + visitante + "', '" + local + "', " + preVisitante + "," + preLocal + "," + resVisitante + "," + resLocal + " )"
+
+	res, err := database.DB.Query(queryString)
+
+	if err != nil {
+		resultado = "Error al realizar Query!"
+		fmt.Println(err)
+		return resultado
+	}
+	defer database.DB.Close()
+	resultado = "Insert EventoDeportivo Correcto!"
 	println(resultado, res)
 
 	return resultado
