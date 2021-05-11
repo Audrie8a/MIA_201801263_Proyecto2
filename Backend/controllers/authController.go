@@ -411,7 +411,6 @@ func CargaMasiva(c *fiber.Ctx) error {
 	resultado = "Error al Cargar Datos!"
 	var data map[string]string
 
-	database.Connect()
 	if err := c.BodyParser(&data); err != nil {
 		fmt.Println(err)
 		return err
@@ -451,7 +450,7 @@ func CargaMasiva(c *fiber.Ctx) error {
 			var contadorTemp int = 0
 			for _, element3 := range element2.Jornadas {
 				var nombreJornada string = element3.Jornada
-				insertJornadas(nombreJornada)
+				resultado = insertJornadas(nombreJornada)
 				var fechaIniJornada string
 				var fechaFinJornada string
 				var contador int = 0
@@ -471,11 +470,10 @@ func CargaMasiva(c *fiber.Ctx) error {
 					if contador == 0 {
 						fechaIniJornada = fecha
 					}
-
 				}
 
 				//Aquí va procedimiento para actualizar Datos Jornada
-				updateFechasJornada(fechaIniJornada, fechaFinJornada)
+				resultado = updateFechasJornada(fechaIniJornada, fechaFinJornada)
 				if contadorTemp == 0 {
 					fechaIniTemporada = fechaIniJornada
 				}
@@ -485,7 +483,10 @@ func CargaMasiva(c *fiber.Ctx) error {
 			}
 
 			//Aquí va el proceso para actualizar Temporada
-			updateFechasTemporada(fechaIniTemporada, fechaFinTemporada)
+			resultado = updateFechasTemporada(fechaIniTemporada, fechaFinTemporada)
+
+			//Aquí Termina de recorrer 1 Temporada
+
 		}
 
 	}
@@ -548,7 +549,7 @@ func insertUsuario(usuario string, contra string, nombre string, apellido string
 	queryString := "call Insert_Cliente("
 	queryString += "'" + nombre + "', '" + usuario + "', '" + contra + "', '" + apellido + "', '" + correo + "' )"
 
-	res, err := database.DB.Query(queryString)
+	res, err := database.DB.Exec(queryString)
 	fmt.Println(queryString)
 	if err != nil {
 		resultado = "Error al realizar Query!"
@@ -558,7 +559,7 @@ func insertUsuario(usuario string, contra string, nombre string, apellido string
 	defer database.DB.Close()
 	resultado = "Insert Usuario Correcto!"
 	println(resultado, res)
-
+	Commit()
 	return resultado
 }
 func insertResultados(nombreTemp string, tipoMemb string) string {
@@ -576,7 +577,7 @@ func insertResultados(nombreTemp string, tipoMemb string) string {
 	queryString := "call Insert_Resultados("
 	queryString += "'" + nombreTemp + "', '" + tipoMemb + "')"
 
-	res, err := database.DB.Query(queryString)
+	res, err := database.DB.Exec(queryString)
 	defer database.DB.Close()
 	if err != nil {
 		resultado = "Error al realizar Query!"
@@ -585,7 +586,7 @@ func insertResultados(nombreTemp string, tipoMemb string) string {
 	}
 	resultado = "Insert Resultados Correcto!"
 	println(resultado, res)
-
+	Commit()
 	return resultado
 }
 func insertJornadas(nombreJornada string) string {
@@ -596,7 +597,7 @@ func insertJornadas(nombreJornada string) string {
 	queryString := "call Insert_Jornadas("
 	queryString += "'" + nombreJornada + "')"
 
-	res, err := database.DB.Query(queryString)
+	res, err := database.DB.Exec(queryString)
 
 	if err != nil {
 		resultado = "Error al realizar Query!"
@@ -606,7 +607,7 @@ func insertJornadas(nombreJornada string) string {
 	defer database.DB.Close()
 	resultado = "Insert Jornadas Correcto!"
 	println(resultado, res)
-
+	Commit()
 	return resultado
 }
 
@@ -614,19 +615,19 @@ func updateFechasTemporada(fechaIni string, fechaFin string) string {
 	var resultado string
 	resultado = ""
 	database.Connect()
-	queryString := "ALTER SESSION SET nls_date_format = 'DD/MM/YYYY HH24:MI'"
-	res2, err2 := database.DB.Query(queryString)
-
-	if err2 != nil {
-		resultado = "Error al realizar Query!"
-		fmt.Println(err2)
-		return resultado
-	}
-	fmt.Println(res2)
-	queryString = "call Update_Temporada("
+	//queryString := "ALTER SESSION SET nls_date_format = 'DD/MM/YYYY HH24:MI'"
+	//res2, err2 := database.DB.Query(queryString)
+	//
+	//if err2 != nil {
+	//	resultado = "Error al realizar Query!"
+	//	fmt.Println(err2)
+	//	return resultado
+	//}
+	//fmt.Println(res2)
+	queryString := "call Update_Temporada("
 	queryString += "'" + fechaIni + "', '" + fechaFin + "' )"
 
-	res, err := database.DB.Query(queryString)
+	res, err := database.DB.Exec(queryString)
 
 	if err != nil {
 		resultado = "Error al realizar Query!"
@@ -636,7 +637,7 @@ func updateFechasTemporada(fechaIni string, fechaFin string) string {
 	defer database.DB.Close()
 	resultado = "Insert Fechas Temporada Correcto!"
 	println(resultado, res)
-
+	Commit()
 	return resultado
 }
 
@@ -644,19 +645,19 @@ func updateFechasJornada(fechaIni string, fechaFin string) string {
 	var resultado string
 	resultado = ""
 	database.Connect()
-	queryString := "ALTER SESSION SET nls_date_format = 'DD/MM/YYYY HH24:MI'"
-	res2, err2 := database.DB.Query(queryString)
-
-	if err2 != nil {
-		resultado = "Error al realizar Query!"
-		fmt.Println(err2)
-		return resultado
-	}
-	fmt.Println(res2)
-	queryString = "call Update_Jornada("
+	//queryString := "ALTER SESSION SET nls_date_format = 'DD/MM/YYYY HH24:MI'"
+	//res2, err2 := database.DB.Query(queryString)
+	//
+	//if err2 != nil {
+	//	resultado = "Error al realizar Query!"
+	//	fmt.Println(err2)
+	//	return resultado
+	//}
+	//fmt.Println(res2)
+	queryString := "call Update_Jornada("
 	queryString += "'" + fechaIni + "', '" + fechaFin + "' )"
 
-	res, err := database.DB.Query(queryString)
+	res, err := database.DB.Exec(queryString)
 
 	if err != nil {
 		resultado = "Error al realizar Query!"
@@ -666,26 +667,26 @@ func updateFechasJornada(fechaIni string, fechaFin string) string {
 	defer database.DB.Close()
 	resultado = "Insert Fechas Jornada Correcto!"
 	println(resultado, res)
-
+	Commit()
 	return resultado
 }
 func insert_EventoDeportivoDeportePrediccion(deporte string, color string, fecha string, visitante string, local string, preVisitante string, preLocal string, resVisitante string, resLocal string) string {
 	var resultado string
 	resultado = ""
 	database.Connect()
-	queryString := "ALTER SESSION SET nls_date_format = 'DD/MM/YYYY HH24:MI'"
-	res2, err2 := database.DB.Query(queryString)
-
-	if err2 != nil {
-		resultado = "Error al realizar Query!"
-		fmt.Println(err2)
-		return resultado
-	}
-	fmt.Println(res2)
-	queryString = "call Insert_EventoDeportivoDeporte("
+	//queryString := "ALTER SESSION SET nls_date_format = 'DD/MM/YYYY HH24:MI'"
+	//res2, err2 := database.DB.Query(queryString)
+	//
+	//if err2 != nil {
+	//	resultado = "Error al realizar Query!"
+	//	fmt.Println(err2)
+	//	return resultado
+	//}
+	//fmt.Println(res2)
+	queryString := "call Insert_EventoDeportivoDeporte("
 	queryString += "'" + deporte + "', '" + color + "', '" + fecha + "', '" + visitante + "', '" + local + "', " + preVisitante + "," + preLocal + "," + resVisitante + "," + resLocal + " )"
 
-	res, err := database.DB.Query(queryString)
+	res, err := database.DB.Exec(queryString)
 
 	if err != nil {
 		resultado = "Error al realizar Query!"
@@ -694,6 +695,26 @@ func insert_EventoDeportivoDeportePrediccion(deporte string, color string, fecha
 	}
 	defer database.DB.Close()
 	resultado = "Insert EventoDeportivo Correcto!"
+	println(resultado, res)
+	Commit()
+	return resultado
+}
+
+func Commit() string {
+	var resultado string
+	database.Connect()
+	resultado = "Guardado!"
+	queryString := "commit"
+	res, err := database.DB.Exec(queryString)
+
+	if err != nil {
+		resultado = "Error al realizar Query!"
+		fmt.Println(err)
+		return resultado
+	}
+
+	defer database.DB.Close()
+	resultado = "Progreso Guardado!"
 	println(resultado, res)
 
 	return resultado
