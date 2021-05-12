@@ -28,15 +28,7 @@ const Cards = ({ name, Imagen, Color, Id }) => {
         }else{
             setColor('teal')
         }
-        Axios.post('http://localhost:4000/updateDeporte',
-            {
-                idDeporte: Id,
-                Imagen: Foto,
-                Color: Colors
-            }).then((response) => {
-                alert(response.data.Mensaje)
-                
-            })
+        
 
 
     }
@@ -80,7 +72,7 @@ const Cards = ({ name, Imagen, Color, Id }) => {
                     <div className="form">
                 <label>Color</label>
                 <div clasName="SelectColor"><Select  options={options} onChange={(e) =>
-                    setValor(e.value)
+                    setValor(e.target.value)
                 } />
                 </div>
                 
