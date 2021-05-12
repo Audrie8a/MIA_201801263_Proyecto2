@@ -1,18 +1,19 @@
 import React, { useState } from "react";
 import "../assets/css/PaginaUsuarios.css";
 import CargaMasiva from './CargaMasiva';
-
+import Deporte from './Deporte';
 function InicioAdmin({ match: { params: { id } } }) {
         const [toggleState, setToggleState] = useState(1);
         
         const toggleTab = (index) => {
-                setToggleState(index);               
+                setToggleState(index);
+                
         }
 
         return (
                 <React.Fragment>
                         <div className="Titulo" >
-                                <h1>TODO DEPORTE GT</h1>
+                                <h1> </h1>
                         </div>
                         <div className="containerUsuario">
                                 <div className="bloc-tabs">
@@ -35,14 +36,14 @@ function InicioAdmin({ match: { params: { id } } }) {
 
                                         <div className="content active-content">
 
-                                                
+
 
                                         </div>
                                 </div>
                                 <div className={toggleState === 2 ? "content active-content" : "content"}>
 
                                         <div className="content active-content">
-                                                <CargaMasiva usuario={id}/>            
+                                                <CargaMasiva usuario={id} />
 
                                         </div>
                                 </div>
@@ -71,7 +72,8 @@ function InicioAdmin({ match: { params: { id } } }) {
 
                                         <div className="content active-content">
 
-
+                                                <Deporte />
+                                               
                                         </div>
                                 </div>
                                 <div className={toggleState === 7 ? "content active-content" : "content"}>

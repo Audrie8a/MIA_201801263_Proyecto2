@@ -13,27 +13,11 @@ import (
 	"github.com/gofiber/fiber"
 
 	"encoding/json"
-
-	"../cargamasiva"
 )
 
 //Peticiones Ejemplo
 func Hello(c *fiber.Ctx) error {
 	return c.SendString("Hello, World !")
-}
-
-func CargaMasiva3(c *fiber.Ctx) error {
-	var resultado string
-	resultado = "Error al registrar!"
-	var Info map[string]cargamasiva.Usuario
-	var data map[string]string
-	database.Connect()
-	if err := c.BodyParser(&data); err != nil {
-		fmt.Println(err)
-		return err
-	}
-	fmt.Println(Info)
-	return c.SendString(resultado)
 }
 
 //Registro
@@ -45,30 +29,33 @@ func CrearUsuario(c *fiber.Ctx) error {
 	if err := c.BodyParser(&data); err != nil {
 		return err
 	}
-	layout := "01-01-2000 13:34"
-	fecha, _ := time.Parse(layout, data["FechaNac"])
-	fechaR, _ := time.Parse(layout, data["FechaRegistro"])
 	//TierInt, _ := strconv.Atoi(data["Tier"])
 	//password, _ := bcrypt.GenerateFromPassword([]byte(data["Password"]), 14)
-
+	dia := time.Now().Day()
+	mes := 4
+	anio := time.Now().Year()
+	hora := time.Now().Hour()
+	min := time.Now().Minute()
+	fmt.Println(dia, '/', mes, '/', anio, ' ', hora, ':', min)
+	fecha := strconv.Itoa(dia) + "/" + strconv.Itoa(mes) + "/" + strconv.Itoa(anio) + " " + strconv.Itoa(hora) + ":" + strconv.Itoa(min)
 	user := models.User{
 		Username:      data["Username"],
 		Password:      data["Password"], //password,
 		Nombre:        data["Nombre"],
 		Apellido:      data["Apellido"],
 		Tier:          0,
-		FechaNac:      fecha,
-		FechaRegistro: fechaR,
+		FechaNac:      data["FechaNac"],
+		FechaRegistro: fecha,
 		Correo:        data["Correo"],
 		Foto:          data["Foto"],
 	}
-	queryString := "Insert into Cliente(Username, Password,Nombre, Apellido, Tier,Correo,Foto ) values ("
+	queryString := "call CrearUsuario("
 	queryString += "'" + user.Username + "' , '" + string(user.Password) + "'"
 	queryString += ", '" + user.Nombre + "' , '" + user.Apellido + "'"
 	queryString += ", " + strconv.Itoa(user.Tier)
-	//queryString+= ","+"'"+ user.FechaNac+"')"
+	queryString += "," + "'" + user.FechaNac + "', '" + user.FechaRegistro + "' "
 	queryString += ", '" + user.Correo + "' , '" + user.Foto + "')"
-	res, err := database.DB.Query(queryString)
+	res, err := database.DB.Exec(queryString)
 	msj := models.Mensaje{
 		Mensaje: resultado,
 	}
@@ -162,8 +149,8 @@ func Login(c *fiber.Ctx) error {
 		Nombre:        data["Nombre"],
 		Apellido:      data["Apellido"],
 		Tier:          0,
-		FechaNac:      time.Now(),
-		FechaRegistro: time.Now(),
+		FechaNac:      data["FechaNac"],
+		FechaRegistro: data["FechaRegistro"],
 		Correo:        data["Correo"],
 		Foto:          data["Foto"],
 	}
@@ -217,8 +204,8 @@ func GetUsuario(c *fiber.Ctx) error {
 		Nombre:        data["Nombre"],
 		Apellido:      data["Apellido"],
 		Tier:          0,
-		FechaNac:      time.Now(),
-		FechaRegistro: time.Now(),
+		FechaNac:      data["FechaNac"],
+		FechaRegistro: data["FechaRegistro"],
 		Correo:        data["Correo"],
 		Foto:          data["Foto"],
 	}
@@ -237,7 +224,7 @@ func GetUsuario(c *fiber.Ctx) error {
 
 	var Username, Password, Nombre, Apellido, Correo, Foto string
 	var Tier int
-	var FechaNac, FechaRegistro time.Time
+	var FechaNac, FechaRegistro string
 	for res.Next() {
 		res.Scan(&Username, &Password, &Nombre, &Apellido, &Tier, &FechaNac, &FechaRegistro, &Correo, &Foto)
 		if Username == "" {
@@ -330,25 +317,23 @@ func UpdateUsuario(c *fiber.Ctx) error {
 		Nombre:        data["Nombre"],
 		Apellido:      data["Apellido"],
 		Tier:          tier,
-		FechaNac:      time.Now(),
-		FechaRegistro: time.Now(),
+		FechaNac:      data["FechaNac"],
+		FechaRegistro: data["FechaRegistro"],
 		Correo:        data["Correo"],
 		Foto:          data["Foto"],
 	}
-	stringQuery := "update cliente set password='"
-	stringQuery += user.Password + "' , nombre='" + user.Nombre + "', "
-	stringQuery += "apellido='" + user.Apellido + "' , Tier=" + strconv.Itoa(user.Tier)
-	//stringQuery+= ", FechaNac='"+user.FechaNac+"' , FechaRegistro='"+user.FechaRegistro
-	stringQuery += ", correo='" + user.Correo + "' , Foto='" + user.Foto + "'"
-	stringQuery += "where username='" + user.Username + "'"
+	stringQuery := "call UpdateUsuario('" + user.Username + "', '"
+	stringQuery += user.Password + "' , '" + user.Nombre + "', "
+	stringQuery += "'" + user.Apellido
+	stringQuery += "', '" + user.Correo + "' , '" + user.Foto + "')"
 
-	res, err := database.DB.Query(stringQuery)
+	res, err := database.DB.Exec(stringQuery)
 
 	msj := models.Mensaje{
 		Mensaje: resultado,
 	}
 	if err != nil {
-		fmt.Println("Error durante Query!")
+		fmt.Println("Error durante Query!", err)
 		return err
 	}
 	println("Datos Actualizados! ", res)
@@ -377,8 +362,8 @@ func LoginProc(c *fiber.Ctx) error {
 		Nombre:        data["Nombre"],
 		Apellido:      data["Apellido"],
 		Tier:          0,
-		FechaNac:      time.Now(),
-		FechaRegistro: time.Now(),
+		FechaNac:      data["FechaNac"],
+		FechaRegistro: data["FechaRegistro"],
 		Correo:        data["Correo"],
 		Foto:          data["Foto"],
 	}
@@ -402,6 +387,38 @@ func LoginProc(c *fiber.Ctx) error {
 	println(resultado2)
 	//return c.Response().Write([]byte("Hello"))
 	return c.JSON(msj) //c.SendString(resultado2)
+}
+
+//Ejemplo Get
+func GetDeportes(c *fiber.Ctx) error {
+	database.Connect()
+
+	stringQuery := "Select * from Deporte"
+	rows, err := database.DB.Query(stringQuery)
+
+	if err != nil {
+
+		fmt.Print("Error running Query!", err)
+		return err
+	}
+
+	defer rows.Close()
+
+	result := models.Deportes{}
+
+	for rows.Next() {
+		Deporte := models.Deporte{}
+
+		err := rows.Scan(&Deporte.IdDeporte, &Deporte.Nombre, &Deporte.Imagen, &Deporte.Color)
+
+		if err != nil {
+			fmt.Println("Error recorriendo Usuarios!", err)
+			return err
+		}
+		result.Sports = append(result.Sports, Deporte)
+	}
+
+	return c.JSON(result)
 }
 
 //CARGA MASIVA --------------------------------------------------------------------------------
@@ -454,7 +471,7 @@ func CargaMasiva(c *fiber.Ctx) error {
 				var fechaIniJornada string
 				var fechaFinJornada string
 				var contador int = 0
-				colorLst := [8]string{"rojo", "rosado", "aqua", "verde", "cafe", "celeste", "naranja", "amarillo"}
+				colorLst := [11]string{"red", "pink", "aqua", "blue", "brown", "olive", "green", "teal", "yellow", "fuchsia", "lime"}
 				for _, element4 := range element3.Predicciones {
 					var deporte string = element4.Deporte
 					var fecha string = element4.Fecha
@@ -464,7 +481,7 @@ func CargaMasiva(c *fiber.Ctx) error {
 					var preLocal int = element4.Prediccion.Local
 					var resVisitante int = element4.Resultado.Visitante
 					var resLocal int = element4.Resultado.Local
-					var color string = colorLst[rand.Intn(7)]
+					var color string = colorLst[rand.Intn(10)]
 					fechaFinJornada = fecha
 					resultado = insert_EventoDeportivoDeportePrediccion(deporte, color, fecha, visitante, local, strconv.Itoa(preVisitante), strconv.Itoa(preLocal), strconv.Itoa(resVisitante), strconv.Itoa(resLocal))
 					if contador == 0 {

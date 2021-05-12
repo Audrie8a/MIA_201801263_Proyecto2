@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Axios from 'axios';
 import '../assets/css/Perfil.css';
-import foto from '../assets/imagenes/fondo2.jpg';
+
 const Perfil = (props) => {
     const [Username, setUser] = useState('')
     const [Password, setPassword] = useState('')
@@ -10,7 +10,7 @@ const Perfil = (props) => {
     const [FechaNac, setFechaNac] = useState('')
     const [Correo, setCorreo] = useState('')
     const [Foto, setFoto] = useState('')
-
+    const Primero = "../assets/imagenes/";
     const [toggleState, setToggleState] = useState(0);
     const toggleTab = (index) => {
         setToggleState(index);
@@ -33,7 +33,7 @@ const Perfil = (props) => {
         else if (e.target.name === 'Apellido') { setApellido(e.target.value) }
         else if (e.target.name === 'FechaNac') { setFechaNac(e.target.value) }
         else if (e.target.name === 'Correo') { setCorreo(e.target.value) }
-        else if (e.target.name === 'Foto') { setFoto(e.target.value) }
+        else if (e.target.name === 'Foto') { setFoto(e.target.files[0].name) }
     }
 
     const submitEditar = () => {
@@ -48,17 +48,19 @@ const Perfil = (props) => {
                 Foto: Foto
             }).then((response) => {
                 alert(response.data.Mensaje)
+                
             })
 
     };
     return (
         <React.Fragment>
-            <div className="FotoPerfil">
-                <image src={foto} />
-            </div>
+            
             <div>
+                <img src={`data:image/gif, base64,${Primero+props.usuario.Foto}`} alt={props.usuario.Username}/>
+                
                 <h1>Bienvenido {props.usuario.Username}</h1>
                 <br />
+                
             </div>
 
 

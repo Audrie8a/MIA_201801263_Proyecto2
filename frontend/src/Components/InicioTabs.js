@@ -11,7 +11,7 @@ function InicioTabs(){
     return(
         <React.Fragment>
             <div className="Titulo" >
-                <h1>TODO DEPORTE GT</h1>
+                <h1> </h1>
             </div>
             <div className="container">
                 <div className="bloc-tabs">

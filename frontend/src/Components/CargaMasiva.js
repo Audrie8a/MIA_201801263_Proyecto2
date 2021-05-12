@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import '../assets/css/CargaMasiva.css'
 import Axios from 'axios'
 const CargaMasiva = props => {    
@@ -16,7 +16,7 @@ const CargaMasiva = props => {
     }
     var ArchivoY ="";
     var AbrirArchivo= function (evt){
-        let status= []
+        
         const fileY= evt.target.files[0];
         const reader= new FileReader();
         let lector = e=>{

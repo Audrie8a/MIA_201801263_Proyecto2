@@ -27,4 +27,5 @@ func Setup(app *fiber.App) {
 
 	app.Post("/CargarDatos", controllers.CargaMasiva)
 
+	app.Get("/Deportes", controllers.GetDeportes)
 }
