@@ -3,7 +3,6 @@ import '../assets/css/Tier.css'
 import Card from './Cards'
 import Axios from 'axios'
 import '../assets/css/Deporte.css'
-
 class Deporte extends React.Component {
     constructor(props) {
         super(props)
@@ -18,6 +17,9 @@ class Deporte extends React.Component {
 
         })
     }
+    handleChange(checked) {
+        this.setState({ checked });
+      }
     render() {
         const { Deportes } = this.state
         return (
@@ -33,9 +35,14 @@ class Deporte extends React.Component {
                         name={Deporte.Nombre}
                         Imagen={Deporte.Imagen}
                         Color={Deporte.Color}
+                        Id= {Deporte.IdDeporte}
                     />)
                 }
             </section>
+            
+           
+   
+           
             </React.Fragment>
         )
     }

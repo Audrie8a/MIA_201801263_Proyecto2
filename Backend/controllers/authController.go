@@ -187,6 +187,39 @@ func Login(c *fiber.Ctx) error {
 	//return c.Response().Write([]byte("Hello"))
 	return c.JSON(msj) //c.SendString(resultado2)
 }
+func UpdateDeporte(c *fiber.Ctx) error {
+	var resultado2 string
+	resultado2 = "Acceso Denegado"
+	var data map[string]string
+	database.Connect()
+	if err := c.BodyParser(&data); err != nil {
+		return err
+	}
+	ID, _ := strconv.Atoi(data["IdDeporte"])
+	user := models.Deporte{
+		IdDeporte: ID,
+		Nombre:    data["Nombre"], //password,
+		Imagen:    data["Imagen"],
+		Color:     data["Color"],
+	}
+	stringQuery := "update Deporte set Color ='" + user.Color + "', Imagen='" + user.Imagen + "' where idDeporte= " + strconv.Itoa(user.IdDeporte)
+
+	res, err := database.DB.Query(stringQuery)
+
+	if err != nil {
+
+		return err
+	}
+	println(res)
+
+	defer res.Close()
+	resultado2 = "Deporte Actualizado!"
+	msj := models.Mensaje{
+		Mensaje: resultado2,
+	}
+	println(resultado2)
+	return c.JSON(msj)
+}
 
 //Obtener Datos Usuario
 func GetUsuario(c *fiber.Ctx) error {

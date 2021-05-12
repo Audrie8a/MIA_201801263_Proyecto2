@@ -55,7 +55,7 @@ function Registro (){
                 } />
                 <label>Foto</label>
                 <input type="file" name="Foto" onChange={(e) =>
-                    setFoto(e.target.value)
+                    setFoto(e.target.files[0].name)
                 } />
                 <button onClick={submitRegistro}>Registrar</button>
             </div>
