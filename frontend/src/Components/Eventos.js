@@ -4,7 +4,7 @@ import Card from './Cards'
 import Axios from 'axios'
 import '../assets/css/Deporte.css'
 
-class Deporte extends React.Component {
+class Eventos extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -12,9 +12,9 @@ class Deporte extends React.Component {
         }
     }
     componentDidMount() {
-        Axios.get('http://localhost:4000/Deportes').then((response) => {
+        Axios.get('http://localhost:4000/Eventos').then((response) => {
 
-            this.setState({ Deportes: response.data.Sports })
+            this.setState({ Deportes: response.data.Eventoss })
 
         })
     }
@@ -33,10 +33,13 @@ class Deporte extends React.Component {
                 
                 {
                     Deportes.map((Deporte) => <Card
-                        name={Deporte.Nombre}
-                        Imagen={Deporte.Imagen}
-                        Color={Deporte.Color}
-                        Id= {Deporte.IdDeporte}
+                        IdEvento={Deporte.Eventoss}
+                        IdJornada={Deporte.IdJornada}
+                        Nombre={Deporte.Nombre}
+                        Fecha= {Deporte.Fecha}
+                        NombreLocal= {Deporte.NombreLocal}
+                        NombreVisitante= {Deporte.NombreVisitante}
+                        
                     />)
                 }
             </section>
@@ -49,4 +52,4 @@ class Deporte extends React.Component {
     }
 }
 
-export default Deporte;
+export default Eventos;

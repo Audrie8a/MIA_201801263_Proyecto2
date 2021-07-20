@@ -4,37 +4,47 @@ import Axios from 'axios';
 import Perfil from './Perfil';
 import Tier from './Tier'
 function PaginaUsuarios({ match: { params: { id } } }) {
-        const [FotoUrl, setFotoUrl]= useState('');
+        const [FotoUrl, setFotoUrl] = useState('');
         const [Respuesta, setRespuesta] = useState(JSON);
         const [Membresia, setMembresia] = useState('');
         const [toggleState, setToggleState] = useState(1);
-        
+        //const [Quinelas, setQuinelas]=useState({Quinelas: []})
+
         const toggleTab = (index) => {
                 setToggleState(index);
-                if (index === 1 || index===2) {
+                if (index === 1 || index === 2) {
                         Axios.post('http://localhost:4000/datosUsuario',
                                 {
                                         Username: id
                                 }).then((response) => {
-                                        if(response.data.Tier===1){
+                                        if (response.data.Tier === 1) {
                                                 setMembresia("Gold");
-                                        }else if(response.data.Tier===2){
+                                        } else if (response.data.Tier === 2) {
                                                 setMembresia("Silver");
-                                        }else if(response.data.Tier===3){
+                                        } else if (response.data.Tier === 3) {
                                                 setMembresia("Bronze");
-                                        }else {
+                                        } else {
                                                 setMembresia("No registrado");
                                         }
 
-                                        if(response.data.Foto===''){
+                                        if (response.data.Foto === '') {
                                                 setFotoUrl("../assets/imagenes/NoImagen.jpg")
-                                        }else{
+                                        } else {
                                                 setFotoUrl(response.data.Foto)
                                         }
 
                                         setRespuesta(response.data);
                                 })
-                }
+                } 
+                //else if (index === 3) {
+                //        Axios.post('http://localhost:4000/QuinelasUsuario',
+                //                {
+                //                        Username: id,
+                //                }).then((response) => {
+                //                        setQuinelas({Quinelas:response.data.Quinelas})
+//
+                //                })
+                //}
 
         }
 
@@ -67,21 +77,22 @@ function PaginaUsuarios({ match: { params: { id } } }) {
                                 <div className={toggleState === 2 ? "content active-content" : "content"}>
 
                                         <div className="content active-content">
-                                                <Tier usuario={Respuesta}/>         
-                                       
+                                                <Tier usuario={Respuesta} />
+
                                         </div>
                                 </div>
                                 <div className={toggleState === 3 ? "content active-content" : "content"}>
 
                                         <div className="content active-content">
-
+                                                
+                                                
 
                                         </div>
                                 </div>
                                 <div className={toggleState === 4 ? "content active-content" : "content"}>
 
                                         <div className="content active-content">
-
+                                               
 
                                         </div>
                                 </div>

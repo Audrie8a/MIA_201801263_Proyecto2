@@ -4,31 +4,47 @@ import Select from 'react-select'
 import Axios from 'axios';
 const options=[
     //"red", "pink", "aqua", "blue", "brown", "olive", "green", "teal", "yellow", "fuchsia", "lime"
-    {value: 1, label:'red'},
-    {value: 2, label:'pink'},
-    {value: 3, label:'aqua'},
-    {value: 4, label:'blue'},
-    {value: 5, label:'brown'},
-    {value: 6, label:'olive'},
-    {value: 7, label:'green'},
-    {value: 8, label:'teal'},
-    {value: 9, label:'yellow'},
-    {value: 10, label:'fuchsia'},
-    {value: 11, label:'lime'},
+    {value: 'red',label:'red'},
+    {value: 'pink',label:'pink'},
+    {value: 'aqua',label:'aqua'},
+    {value: 'blue',label:'blue'},
+    {value: 'brown',label:'brown'},
+    {value: 'olive',label:'olive'},
+    {value: 'green',label:'green'},
+    {value: 'teal',label:'teal'},
+    {value: 'yellow',label:'yellow'},
+    {value: 'fuchsia', label:'fuchsia'},
+    {value: 'lime', label:'lime'},
 ] 
 const Cards = ({ name, Imagen, Color, Id }) => {
-    const [valor,setValor]=useState(0)
-    const [Colors, setColor] = useState('')
-    const [Foto, setFoto] = useState('')
+    
+    const [Colors, setColor] = useState(Color)
+    const [Foto, setFoto] = useState(Imagen)
     const submitRegistro=()=>{
-        if (valor===1){
-            setColor('red');
-        }else if (valor===2){
-            setColor('pink');
-        }else{
-            setColor('teal')
-        }
+        //if (valor===1){setColor('red');
+        //}else if (valor===2){setColor('pink');
+        //}else if (valor==3){setColor('aqua')
+        //}else if (valor==4){setColor('blue')
+        //}else if (valor==5){setColor('brown')
+        //}else if (valor==6){setColor('olive')
+        //}else if (valor==7){setColor('green')
+        //}else if (valor==8){setColor('teal')
+        //}else if (valor==9){setColor('yellow')
+        //}else if (valor==10){setColor('fuchsia')
+        //}else if (valor==11){setColor('lime')}
         
+        
+        
+        Axios.post('http://localhost:4000/updateDeporte',
+            {
+                idDeporte: Id.toString(),
+                Nombre: name,
+                Imagen: Foto,
+                Color: Colors
+            }).then((response) => {
+                alert(response.data.Mensaje)
+                
+            })
 
 
     }
@@ -72,7 +88,7 @@ const Cards = ({ name, Imagen, Color, Id }) => {
                     <div className="form">
                 <label>Color</label>
                 <div clasName="SelectColor"><Select  options={options} onChange={(e) =>
-                    setValor(e.target.value)
+                    setColor(e.value)
                 } />
                 </div>
                 

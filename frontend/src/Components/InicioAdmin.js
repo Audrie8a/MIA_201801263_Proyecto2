@@ -2,12 +2,19 @@ import React, { useState } from "react";
 import "../assets/css/PaginaUsuarios.css";
 import CargaMasiva from './CargaMasiva';
 import Deporte from './Deporte';
+import QuinelaUsuario from "./QuinelaUsuario";
+import Temporadas from "./Temporadas";
 function InicioAdmin({ match: { params: { id } } }) {
         const [toggleState, setToggleState] = useState(1);
-        
+
+        const [subtoggleState, setSubToggleState] = useState(1);
         const toggleTab = (index) => {
                 setToggleState(index);
-                
+
+        }
+        const subtoggleTab = (index) => {
+                setSubToggleState(index);
+
         }
 
         return (
@@ -36,7 +43,7 @@ function InicioAdmin({ match: { params: { id } } }) {
 
                                         <div className="content active-content">
 
-
+                                                <QuinelaUsuario />
 
                                         </div>
                                 </div>
@@ -57,7 +64,33 @@ function InicioAdmin({ match: { params: { id } } }) {
                                 <div className={toggleState === 4 ? "content active-content" : "content"}>
 
                                         <div className="content active-content">
+                                                <div className="containerUsuario">
+                                                        <div className="bloc-tabs">
+                                                                <div className={subtoggleState === 8 ? "tabs active-tabs" : "tabs"}
+                                                                        onClick={() => subtoggleTab(8)}>Temporal Actual</div>
+                                                                <div className={subtoggleState === 9 ? "tabs active-tabs" : "tabs"}
+                                                                        onClick={() => subtoggleTab(9)}>Temporadas</div>
 
+                                                        </div>
+                                                        <div className={subtoggleState === 8 ? "content active-content" : "content"}>
+
+                                                                <div className="content active-content">
+
+                                                                        <h1>8</h1>
+
+
+                                                                </div>
+                                                        </div>
+                                                        <div className={subtoggleState === 9 ? "content active-content" : "content"}>
+
+                                                                <div className="content active-content">
+                                                                        <Temporadas/>
+
+                                                                </div>
+                                                        </div>
+
+
+                                                </div>
 
                                         </div>
                                 </div>
@@ -73,7 +106,7 @@ function InicioAdmin({ match: { params: { id } } }) {
                                         <div className="content active-content">
 
                                                 <Deporte />
-                                               
+
                                         </div>
                                 </div>
                                 <div className={toggleState === 7 ? "content active-content" : "content"}>

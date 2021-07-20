@@ -1,20 +1,47 @@
-import React, {useState}from 'react'
+import React, { useState } from 'react'
 import Select from 'react-select'
 import '../assets/css/Tier.css'
+import Axios from 'axios';
 
-const options=[
-    {value: 1, label:'Gold'},
-    {value: 2, label:'Silver'},
-    {value: 3, label:'Bronze'},
+const options = [
+    { value: 1, label: 'Gold' },
+    { value: 2, label: 'Silver' },
+    { value: 3, label: 'Bronze' },
 ]
-const Tier = props =>{
+const Tier = props => {
     const [toggleState, setToggleState] = useState(0);
     const toggleTab = (index) => {
-        setToggleState(index);   
+        setToggleState(index);
     }
+
+    const [Tier, setMemb] = useState(props.usuario.Tier)
+    const submitElegir = () => {
+        Axios.post('http://localhost:4000/ProcMembresia',
+            {
+                IdTipoMembresia: Tier.toString(),
+                IdEstadoMembresia:"1",
+                Username: props.usuario.Username,
+            }).then((response) => {
+                alert(response.data.Mensaje)
+                
+            })
+
+    };
+    const submitCancelar = () => {
+        Axios.post('http://localhost:4000/ProcMembresia',
+            {
+                IdTipoMembresia: Tier.toString(),
+                IdEstadoMembresia:"0",
+                Username: props.usuario.Username,
+            }).then((response) => {
+                alert(response.data.Mensaje)
+                
+            })
+
+    };
     return (
-           <React.Fragment>
-               
+        <React.Fragment>
+
             <div>
                 <h1>Hola {props.usuario.Username}</h1>
                 <br />
@@ -44,8 +71,10 @@ const Tier = props =>{
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td ><Select options={options}/></td>
-                                                <td><button id="Boton">Elegir</button><br/><br/><button>Cancelar</button></td>
+                                                <td ><Select options={options} onChange={(e) =>
+                                                    setMemb(e.value)
+                                                } /></td>
+                                                <td><button id="Boton" onClick={submitElegir}>Elegir</button><br /><br /><button onClick={submitCancelar}>Cancelar</button></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -81,7 +110,7 @@ const Tier = props =>{
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            
+
                                         </tr>
                                     </tbody>
                                 </table>
@@ -89,12 +118,12 @@ const Tier = props =>{
                                 <button >Editar</button>
                             </div>
                         </div>
-                       
+
                     </div>
                 </div>
 
             </div>
-           </React.Fragment>
+        </React.Fragment>
 
 
     );

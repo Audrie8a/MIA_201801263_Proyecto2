@@ -187,6 +187,40 @@ func Login(c *fiber.Ctx) error {
 	//return c.Response().Write([]byte("Hello"))
 	return c.JSON(msj) //c.SendString(resultado2)
 }
+func UpdateDeporte(c *fiber.Ctx) error {
+	var resultado2 string
+	resultado2 = "Acceso Denegado"
+	var data map[string]string
+	database.Connect()
+	if err := c.BodyParser(&data); err != nil {
+		fmt.Println(err)
+		return err
+	}
+	ID, _ := strconv.Atoi(data["idDeporte"])
+	user := models.Deporte{
+		IdDeporte: ID,
+		Nombre:    data["Nombre"], //password,
+		Imagen:    data["Imagen"],
+		Color:     data["Color"],
+	}
+	stringQuery := "update Deporte set Color ='" + user.Color + "', Imagen='" + user.Imagen + "' where idDeporte= " + strconv.Itoa(user.IdDeporte)
+	fmt.Println(stringQuery)
+	res, err := database.DB.Query(stringQuery)
+
+	if err != nil {
+
+		return err
+	}
+	println(res)
+
+	defer res.Close()
+	resultado2 = "Deporte Actualizado!"
+	msj := models.Mensaje{
+		Mensaje: resultado2,
+	}
+	println(resultado2)
+	return c.JSON(msj)
+}
 
 //Obtener Datos Usuario
 func GetUsuario(c *fiber.Ctx) error {
@@ -393,7 +427,7 @@ func LoginProc(c *fiber.Ctx) error {
 func GetDeportes(c *fiber.Ctx) error {
 	database.Connect()
 
-	stringQuery := "Select * from Deporte"
+	stringQuery := "Select * from Deporte "
 	rows, err := database.DB.Query(stringQuery)
 
 	if err != nil {
@@ -421,7 +455,213 @@ func GetDeportes(c *fiber.Ctx) error {
 	return c.JSON(result)
 }
 
+func GetQuinelasUsuario(c *fiber.Ctx) error {
+	var resultado2 string
+	resultado2 = "Acceso Denegado"
+	var data map[string]string
+	database.Connect()
+	if err := c.BodyParser(&data); err != nil {
+		fmt.Println(resultado2, err)
+		return err
+	}
+
+	user := models.User{
+		Username:      data["Username"],
+		Password:      data["Password"], //password,
+		Nombre:        data["Nombre"],
+		Apellido:      data["Apellido"],
+		Tier:          0,
+		FechaNac:      data["FechaNac"],
+		FechaRegistro: data["FechaRegistro"],
+		Correo:        data["Correo"],
+		Foto:          data["Foto"],
+	}
+
+	stringQuery := "select Quinela.UsernameCliente, Quinela.idQuinela, Quinela.Puntaje,Temporada.Nombre, Quinela.Local, Quinela.Visitante, eventodeportivo.nombrevisitante, eventodeportivo.nombrelocal, eventodeportivo.resultadovisitante, eventodeportivo.resultadolocal, eventodeportivo.fecha "
+	stringQuery += " from Cliente, Quinela, Temporada, EventoDeportivo "
+	stringQuery += " where EventoDeportivo.idEventoDeportivo=Quinela.idEventoDeportivo "
+	stringQuery += " and Temporada.idTemporada=Quinela.idTemporadaQ "
+	stringQuery += " and Cliente.Username = Quinela.UsernameCliente "
+	stringQuery += " and Cliente.Username='" + user.Username + "'"
+	rows, err := database.DB.Query(stringQuery)
+	//fmt.Println(stringQuery)
+
+	if err != nil {
+
+		fmt.Print("Error running Query!", err)
+		return err
+	}
+
+	defer rows.Close()
+
+	result := models.QuinelasUusairo{}
+
+	for rows.Next() {
+		Quinela := models.QuinelaUsuario{}
+
+		err := rows.Scan(&Quinela.Username, &Quinela.IdQuinela, &Quinela.Puntaje, &Quinela.Nombre, &Quinela.Local, &Quinela.Visitante, &Quinela.NombreVisitante, &Quinela.NombreLocal, &Quinela.ResultadoVisitante, &Quinela.ResultadoLocal, &Quinela.Fecha)
+
+		if err != nil {
+			fmt.Println("Error recorriendo Quinelas Usuario!", err)
+			return err
+		}
+		result.Quinelas = append(result.Quinelas, Quinela)
+	}
+
+	return c.JSON(result)
+}
+func GetQuinelas(c *fiber.Ctx) error {
+
+	database.Connect()
+
+	stringQuery := "select Quinela.UsernameCliente, Quinela.idQuinela, Quinela.Puntaje,Temporada.Nombre, Quinela.Local, Quinela.Visitante, eventodeportivo.nombrevisitante, eventodeportivo.nombrelocal, eventodeportivo.resultadovisitante, eventodeportivo.resultadolocal, eventodeportivo.fecha "
+	stringQuery += " from Cliente, Quinela, Temporada, EventoDeportivo "
+	stringQuery += " where EventoDeportivo.idEventoDeportivo=Quinela.idEventoDeportivo "
+	stringQuery += " and Temporada.idTemporada=Quinela.idTemporadaQ "
+	stringQuery += " and Cliente.Username = Quinela.UsernameCliente "
+	rows, err := database.DB.Query(stringQuery)
+	//fmt.Println(stringQuery)
+
+	if err != nil {
+
+		fmt.Print("Error running Query!", err)
+		return err
+	}
+
+	defer rows.Close()
+
+	result := models.QuinelasUusairo{}
+
+	for rows.Next() {
+		Quinela := models.QuinelaUsuario{}
+
+		err := rows.Scan(&Quinela.Username, &Quinela.IdQuinela, &Quinela.Puntaje, &Quinela.Nombre, &Quinela.Local, &Quinela.Visitante, &Quinela.NombreVisitante, &Quinela.NombreLocal, &Quinela.ResultadoVisitante, &Quinela.ResultadoLocal, &Quinela.Fecha)
+
+		if err != nil {
+			fmt.Println("Error recorriendo Quinelas Usuario!", err)
+			return err
+		}
+
+		result.Quinelas = append(result.Quinelas, Quinela)
+	}
+	fmt.Println("Quinelas Obtenida con exito!")
+	return c.JSON(result)
+}
+
+func GetDatosTemporadas(c *fiber.Ctx) error {
+
+	database.Connect()
+
+	stringQuery := " select Cliente.Username, Temporada.Nombre, sum(Quinela.Puntaje) as Total "
+	stringQuery += " from ClienteMembresia, Temporada, Membresia, Cliente, Quinela "
+	stringQuery += " where  ClienteMembresia.Membresia=Membresia.idMembresia "
+	stringQuery += " and quinela.idtemporadaq=temporada.idtemporada"
+	stringQuery += " and Temporada.idTemporada=Membresia.idTemporada "
+	stringQuery += " and ClienteMembresia.Usuario =Cliente.Username "
+	//stringQuery += " and Temporada.Nombre=(select Nombre from (select * from Temporada order by Nombre desc) where rownum=1) "
+	stringQuery += " group by Cliente.Username, Temporada.Nombre"
+	rows, err := database.DB.Query(stringQuery)
+	//fmt.Println(stringQuery, rows)
+
+	if err != nil {
+
+		fmt.Print("Error running Query!", err)
+		return err
+	}
+
+	defer rows.Close()
+
+	result := models.TemporadasDatos{}
+
+	for rows.Next() {
+		Temp := models.TemporadaDato{}
+
+		err := rows.Scan(&Temp.Username, &Temp.Nombre, &Temp.Total)
+
+		if err != nil {
+			fmt.Println("Error recorriendo Datos Temporada!", err)
+			return err
+		}
+
+		result.Datos = append(result.Datos, Temp)
+	}
+	fmt.Println("Datos Temporada Actual Obtenida con exito!")
+	return c.JSON(result)
+}
+
+func GetEventos(c *fiber.Ctx) error {
+
+	database.Connect()
+
+	stringQuery := " select EventoDeportivo.idEventoDeportivo, eventodeportivo.idjoranadaed, Deporte.Nombre,EventoDeportivo.Fecha, eventodeportivo.nombrelocal, eventodeportivo.nombrevisitante	"
+	stringQuery += " from EventoDeportivo,Deporte "
+	stringQuery += " where EventoDeportivo.idDeporte=deporte.iddeporte"
+	rows, err := database.DB.Query(stringQuery)
+	//fmt.Println(stringQuery, rows)
+
+	if err != nil {
+
+		fmt.Print("Error running Query!", err)
+		return err
+	}
+
+	defer rows.Close()
+
+	result := models.Eventos{}
+
+	for rows.Next() {
+		Temp := models.Evento{}
+
+		err := rows.Scan(&Temp.IdEvento, &Temp.IdJornada, &Temp.Nombre, &Temp.Fecha, &Temp.NombreLocal, &Temp.NombreVisitante)
+
+		if err != nil {
+			fmt.Println("Error recorriendo Datos Evento!", err)
+			return err
+		}
+
+		result.Eventoss = append(result.Eventoss, Temp)
+	}
+	fmt.Println("Datos Eventos Actual Obtenida con exito!")
+	return c.JSON(result)
+}
+func ProcMembresia(c *fiber.Ctx) error {
+	var resultado string
+	resultado = ""
+	var data map[string]string
+	database.Connect()
+	if err := c.BodyParser(&data); err != nil {
+		fmt.Println("Ocurrio un error", err)
+		return err
+	}
+
+	//password, _ := bcrypt.GenerateFromPassword([]byte(data["Password"]), 14)
+	Tipo, _ := strconv.Atoi(data["IdTipoMembresia"])
+	Estado, _ := strconv.Atoi(data["IdEstadoMembresia"])
+
+	Memb := models.MembresiaProc{
+		IdTipoMembresia:   Tipo,
+		IdEstadoMembresia: Estado, //password,
+		Usuario:           data["Username"],
+	}
+
+	queryString := "call Membresia_Usuario("
+	queryString += strconv.Itoa(Memb.IdTipoMembresia) + "," + strconv.Itoa(Memb.IdEstadoMembresia) + ", '" + Memb.Usuario + "')"
+	res, err := database.DB.Exec(queryString)
+	fmt.Println(queryString)
+	if err != nil {
+		resultado = "Error al realizar Query!"
+		fmt.Println(err)
+		return err
+	}
+	defer database.DB.Close()
+	resultado = "Insert Membresia Correcto!"
+	println(resultado, res)
+	Commit()
+	return err
+}
+
 //CARGA MASIVA --------------------------------------------------------------------------------
+var colorArray []string
 
 func CargaMasiva(c *fiber.Ctx) error {
 	var resultado string
@@ -482,6 +722,11 @@ func CargaMasiva(c *fiber.Ctx) error {
 					var resVisitante int = element4.Resultado.Visitante
 					var resLocal int = element4.Resultado.Local
 					var color string = colorLst[rand.Intn(10)]
+					//if len(colorArray) == 0 {
+					//	colorArray = append(colorArray, color)
+					//} else {
+					//	color = ComprobarColor(color, colorLst, 0)
+					//}
 					fechaFinJornada = fecha
 					resultado = insert_EventoDeportivoDeportePrediccion(deporte, color, fecha, visitante, local, strconv.Itoa(preVisitante), strconv.Itoa(preLocal), strconv.Itoa(resVisitante), strconv.Itoa(resLocal))
 					if contador == 0 {
@@ -736,3 +981,19 @@ func Commit() string {
 
 	return resultado
 }
+
+//
+//func ComprobarColor(color string, colorLst [11]string, contador int) string {
+//
+//	if contador != 10 {
+//		for _, clr := range colorArray {
+//			if color == clr {
+//				color = colorLst[contador]
+//				color = ComprobarColor(color, colorLst, contador)
+//			}
+//		}
+//		colorArray = append(colorArray, color)
+//	}
+//	contador++
+//	return color
+//}

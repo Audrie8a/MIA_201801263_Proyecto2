@@ -30,4 +30,14 @@ func Setup(app *fiber.App) {
 	app.Get("/Deportes", controllers.GetDeportes)
 
 	app.Post("/updateDeporte", controllers.UpdateDeporte)
+
+	app.Post("/QuinelasUsuario", controllers.GetQuinelasUsuario)
+
+	app.Get("/Quinelas", controllers.GetQuinelas)
+
+	app.Get("/Temporadas", controllers.GetDatosTemporadas)
+
+	app.Get("/Eventos", controllers.GetEventos)
+
+	app.Post("/ProcMembresia", controllers.ProcMembresia)
 }
